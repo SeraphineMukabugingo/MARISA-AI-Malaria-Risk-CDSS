@@ -1,0 +1,123 @@
+# ==========================================
+# Environment variables and secrets
+# ==========================================
+
+.env
+.env.*
+!.env.example
+
+
+# ==========================================
+# Python cache and compiled files
+# ==========================================
+
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+
+# ==========================================
+# Virtual environments
+# ==========================================
+
+.venv/
+venv/
+env/
+
+backend/.venv/
+*/.venv/
+*/venv/
+*/env/
+
+
+# ==========================================
+# Jupyter
+# ==========================================
+
+.ipynb_checkpoints/
+
+
+# ==========================================
+# IDE / Editors
+# ==========================================
+
+.vscode/
+.idea/
+*.swp
+*.swo
+
+
+# ==========================================
+# Operating system files
+# ==========================================
+
+.DS_Store
+Thumbs.db
+
+
+# ==========================================
+# Logs
+# ==========================================
+
+*.log
+
+
+# ==========================================
+# Database backups
+# ==========================================
+
+*.sql
+*.dump
+*.backup
+
+
+# ==========================================
+# Local data files
+# ==========================================
+
+*.csv
+*.parquet
+*.zip
+
+
+# ==========================================
+# Generated API files
+# ==========================================
+
+openapi.json
+openapi_pretty.json
+
+
+# ==========================================
+# Python test and coverage files
+# ==========================================
+
+.pytest_cache/
+.coverage
+htmlcov/
+
+
+# ==========================================
+# Docker temporary files
+# ==========================================
+
+docker-data/
+postgres-data/
+
+
+# Unused calibrated ML model
+backend/app/artifacts/rf_calibrated.pkl
+
+
+
+# Local SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary backup files
+*.backup
+*.backup_*
+*.bak

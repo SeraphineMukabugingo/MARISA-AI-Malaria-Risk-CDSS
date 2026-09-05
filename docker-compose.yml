@@ -1,0 +1,66 @@
+services:
+
+  db:
+    image: postgres:16-alpine
+    container_name: marisa_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - marisa_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marisa"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+
+  backend:
+    build: ./backend
+    container_name: marisa_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend/app/artifacts:/app/app/artifacts
+
+
+  streamlit:
+    build: ./streamlit_app
+    container_name: marisa_streamlit
+    restart: unless-stopped
+    environment:
+      API_BASE_URL: http://backend:8000
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+    volumes:
+      - ./streamlit_app/app.py:/app/app.py
+
+
+  dash:
+    build: ./dash_app
+    container_name: marisa_dash
+    restart: unless-stopped
+    environment:
+      API_BASE_URL: http://backend:8000
+    ports:
+      - "8050:8050"
+    depends_on:
+      - backend
+    volumes:
+      - ./dash_app/app.py:/app/app.py
+
+
+volumes:
+  marisa_pgdata:
