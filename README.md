@@ -60,7 +60,8 @@ docker compose up --build
 - Backend API + docs: http://localhost:8000/docs
 - Streamlit clinician tool: http://localhost:8501
 - Dash admin dashboard: http://localhost:8050
-- PostgreSQL: localhost:5432 (user: `marisa`, password: `marisa_dev_password` — change before any real deployment)
+- PostgreSQL: localhost:5432 (credentials configured through environment variables)
+
 
 ## Plugging in your REAL trained model (important — currently runs a placeholder)
 
@@ -93,7 +94,7 @@ actual research model:
 
 - **PyInstaller offline `.exe`** — for clinics with no internet at all, wrapping the Streamlit app + a local SQLite fallback (already supported by `database.py`) into a single executable. Not attempted yet; the Streamlit + SQLite combination is the right foundation for this when you're ready.
 - **Authentication / multi-clinic accounts** — currently `clinic_id` is a free-text field for basic segmentation, not a real login system.
-- **HTTPS / production secrets management** — the Postgres password in `docker-compose.yml` is a development default; replace via environment variables or a secrets manager before any real deployment.
+- **HTTPS / production secrets management — production deployments must use HTTPS and securely managed environment variables or a secrets manager. Database credentials must never be committed to the repository.
 
 ## Presentation materials
 
