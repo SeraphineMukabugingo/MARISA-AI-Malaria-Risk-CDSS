@@ -14,7 +14,7 @@ Additional schemas support:
 - national and RBC dashboards
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Literal
 
 from pydantic import BaseModel, Field
 
@@ -56,7 +56,13 @@ class PatientInput(BaseModel):
         description="Whether the woman is currently pregnant",
     )
 
-    province: str = Field(
+    province: Literal[
+        "Kigali City",
+        "Southern Province",
+        "Northern Province",
+        "Eastern Province",
+        "Western Province",
+    ] = Field(
         ...,
         description=(
             "One of: Kigali City, Southern Province, "
@@ -65,14 +71,23 @@ class PatientInput(BaseModel):
         ),
     )
 
-    residence_type: str = Field(
+    residence_type: Literal[
+        "Rural",
+        "Urban",
+    ] = Field(
         ...,
         description="Rural or Urban",
     )
 
-    marital_status: str = Field(
+    marital_status: Literal[
+        "never",
+        "married",
+        "widowed",
+        "divorced",
+        "separated",
+    ] = Field(
         ...,
-        description="never, married, widowed, or divorced",
+        description="never, married, widowed, divorced, or separated",
     )
 
     education: str = Field(

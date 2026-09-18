@@ -350,45 +350,26 @@ def contextual_feature_label(
     feature: str,
     patient_value: float,
 ) -> str:
-    """
-    Produce a clinician-readable feature label.
 
-    For one-hot encoded variables, indicate whether the
-    category applies to the current patient.
-    """
-
-    label = ml_model.friendly_label(
-        feature
+    label = ml_model.contextual_label(
+        feature,
+        patient_value,
     )
 
+    if ml_model.is_one_hot_feature(feature):
 
-    if feature in CONTINUOUS_FEATURES:
-
-        return (
-
-            f"{label}: "
-            f"{float(patient_value):g}"
-
+        applies = (
+            "Yes"
+            if float(patient_value) >= 0.5
+            else "No"
         )
 
+        return (
+            f"{label} "
+            f"(Applies: {applies})"
+        )
 
-    applies = (
-
-        "Yes"
-
-        if float(patient_value) >= 0.5
-
-        else "No"
-
-    )
-
-
-    return (
-
-        f"{label} "
-        f"(Applies: {applies})"
-
-    )
+    return label
 
 
 # ==========================================================
@@ -923,6 +904,51 @@ def predict(
                         group
                     ] = item
 
+            # --------------------------------------------------
+            # REMOVE NON-APPLICABLE ITN EXPLANATION
+            # --------------------------------------------------
+            #
+            # ITN status is not applicable when the woman does
+            # not own a mosquito net. The ITN feature remains
+            # in the 66-feature model input, but its explanation
+            # should not be shown as a separate clinician-facing
+            # factor when no net is owned.
+            # --------------------------------------------------
+
+            has_net_feature = next(
+
+                (
+                    item
+                    for item in feature_records
+                    if item["feature"]
+                    == "has_mosquito_bed_net_for_sleeping__hv227"
+                ),
+
+                None,
+
+            )
+
+
+            if (
+
+                has_net_feature is not None
+
+                and has_net_feature["patient_value"] < 0.5
+
+            ):
+
+                best_by_group = {
+
+                    group: item
+
+                    for group, item in best_by_group.items()
+
+                    if not item["feature"].startswith(
+                        "insecticidetreated_net_itn__hml10_"
+                    )
+
+                }
+
 
             # --------------------------------------------------
             # SORT BY ABSOLUTE CONTRIBUTION
@@ -1063,6 +1089,7 @@ def predict(
         age=patient.age,
 
         province=patient.province,
+
 
         residence_type=patient.residence_type,
 

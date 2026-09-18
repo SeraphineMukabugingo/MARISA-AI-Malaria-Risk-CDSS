@@ -739,17 +739,32 @@ def contextual_label(
 
         return f"Education: {education}"
 
-    # ------------------------------------------------------
+        # ------------------------------------------------------
     # SOCIOECONOMIC PROXY
     # ------------------------------------------------------
 
     if col == "wealth_index_combined__hv270":
 
-        return (
-            "Household socioeconomic proxy score: "
-            f"{value:g}"
+        wealth_proxy_labels = {
+
+            1: "Very low socioeconomic proxy level",
+            2: "Low socioeconomic proxy level",
+            3: "Moderate socioeconomic proxy level",
+            4: "High socioeconomic proxy level",
+            5: "Very high socioeconomic proxy level",
+        }
+
+        proxy_level = int(round(value))
+
+        description = wealth_proxy_labels.get(
+            proxy_level,
+            "Socioeconomic proxy level unavailable",
         )
 
+        return (
+            "Household socioeconomic status: "
+            f"{description}"
+        )
     # ------------------------------------------------------
     # ENVIRONMENT
     # ------------------------------------------------------
@@ -1641,7 +1656,6 @@ def encode_patient(patient) -> pd.DataFrame:
     )
 
     marital_map = {
-
         "never": "0.0",
         "married": "1.0",
         "widowed": "2.0",
