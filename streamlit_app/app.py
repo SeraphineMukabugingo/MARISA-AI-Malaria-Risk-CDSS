@@ -79,7 +79,7 @@ T = {
             "Enter information available during today's clinical visit."
         ),
 
-        "clinic_id": "Clinic ID (optional)",
+        "clinic_id": "Clinic ID (required)",
 
         "name": (
             "Patient name or ID "
@@ -331,7 +331,7 @@ T = {
             "Andika amakuru aboneka igihe umurwayi aje kwisuzumisha uyu munsi."
         ),
 
-        "clinic_id": "Nimero cyangwa ID y'Ivuriro (si ngombwa)",
+        "clinic_id": "Nimero cyangwa ID y'Ivuriro (birakenewe)",
 
         "name": (
             "Izina cyangwa nimero y'umurwayi "
@@ -668,10 +668,24 @@ with tab_new:
         with st.form("assessment_form"):
             c1, c2 = st.columns(2)
             with c1:
-                clinic_id = st.text_input(t["clinic_id"], value="")
+                clinic_id = st.text_input(
+                    t["clinic_id"],
+                    value="",
+                    placeholder="e.g. 34 or MUSANZE-HC-01",
+                )
                 name = st.text_input(t["name"], value="")
-                age = st.number_input(t["age"], min_value=15, max_value=49, value=27, step=1)
-                pregnant = st.radio(t["pregnant"], [t["no"], t["yes"]], horizontal=True) == t["yes"]
+                age = st.number_input(
+                    t["age"],
+                    min_value=15,
+                    max_value=49,
+                    value=27,
+                    step=1,
+                )
+                pregnant = st.radio(
+                    t["pregnant"],
+                    [t["no"], t["yes"]],
+                    horizontal=True,
+                ) == t["yes"]
             with c2:
                 residence_choice = st.radio(t["residence"], [t["rural"], t["urban"]], horizontal=True)
                 residence_type = "Rural" if residence_choice == t["rural"] else "Urban"
@@ -698,7 +712,15 @@ with tab_new:
                 water_source = st.selectbox(t["water"], ["improved", "unimproved"])
                 toilet_facility = st.selectbox(t["toilet"], ["improved", "unimproved"])
 
-            submitted = st.form_submit_button(t["calculate"], type="primary", use_container_width=True)
+            submitted = st.form_submit_button(
+                t["calculate"],
+                type="primary",
+                use_container_width=True,
+            )
+
+            if submitted and not clinic_id.strip():
+                st.error("Clinic ID is required. Please enter the clinic ID before calculating the risk.")
+                submitted = False
 
     with col_result:
         st.subheader(t["risk_assessment"])
