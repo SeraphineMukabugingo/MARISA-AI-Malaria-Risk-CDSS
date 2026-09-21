@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN pip install --no-cache-dir streamlit==1.36.0 plotly==5.22.0 requests==2.32.3 streamlit-folium==0.22.0 folium==0.16.0
 
-COPY app.py .
+COPY streamlit_app/app.py .
 
 EXPOSE 8501
 
