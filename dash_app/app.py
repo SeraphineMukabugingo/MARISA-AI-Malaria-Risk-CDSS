@@ -44,25 +44,56 @@ COLORS = {
 def get_api_data(endpoint, default=None):
     """
     Safely retrieve data from the MARISA backend API.
+
+    Retries temporary Render/API failures before returning the
+    supplied default value.
     """
 
     if default is None:
         default = {}
 
-    try:
-        response = requests.get(
-            f"{API_BASE_URL}{endpoint}",
-            timeout=10
-        )
+    url = f"{API_BASE_URL}{endpoint}"
 
-        response.raise_for_status()
+    for attempt in range(3):
+        try:
+            print(
+                f"API REQUEST: {url} "
+                f"(attempt {attempt + 1}/3)"
+            )
 
-        return response.json()
+            response = requests.get(
+                url,
+                timeout=30
+            )
 
-    except Exception as error:
-        print(f"API ERROR {endpoint}: {error}")
+            print(
+                f"API RESPONSE: {endpoint} "
+                f"status={response.status_code}"
+            )
 
-        return default
+            response.raise_for_status()
+
+            return response.json()
+
+        except requests.exceptions.RequestException as error:
+            print(
+                f"API ERROR: {endpoint} "
+                f"attempt {attempt + 1}/3: {error}"
+            )
+
+            if attempt < 2:
+                import time
+                time.sleep(3)
+
+        except Exception as error:
+            print(
+                f"API ERROR: {endpoint} "
+                f"unexpected error: {error}"
+            )
+
+            break
+
+    return default
 
 
 # ============================================================
