@@ -1116,7 +1116,7 @@ app.layout = html.Div(
 
         dcc.Interval(
             id="refresh-interval",
-            interval=30 * 1000,
+            interval=300 * 1000,
             n_intervals=0
         ),
 
@@ -1198,23 +1198,23 @@ app.layout = html.Div(
 )
 def update_dashboard(selected_tab, n_intervals):
 
-    national_data = get_api_data(
-        "/dashboard",
-        {}
-    )
-
-    rbc_data = get_api_data(
-        "/rbc-dashboard",
-        {}
-    )
-
-    trend_data = get_api_data(
-        "/daily-trend",
-        {}
-    )
-
-
     if selected_tab == "national":
+
+        national_data = get_api_data(
+            "/dashboard",
+            None
+        )
+
+        if not national_data:
+            return html.Div(
+                "Unable to retrieve national monitoring data. Please try again shortly.",
+                style={
+                    "padding": "30px",
+                    "textAlign": "center",
+                    "color": "#B00020",
+                    "fontSize": "18px"
+                }
+            )
 
         return create_national_dashboard(
             national_data
@@ -1223,12 +1223,44 @@ def update_dashboard(selected_tab, n_intervals):
 
     elif selected_tab == "rbc":
 
+        rbc_data = get_api_data(
+            "/rbc-dashboard",
+            None
+        )
+
+        if not rbc_data:
+            return html.Div(
+                "Unable to retrieve RBC district monitoring data. Please try again shortly.",
+                style={
+                    "padding": "30px",
+                    "textAlign": "center",
+                    "color": "#B00020",
+                    "fontSize": "18px"
+                }
+            )
+
         return create_rbc_dashboard(
             rbc_data
         )
 
 
     elif selected_tab == "trend":
+
+        trend_data = get_api_data(
+            "/daily-trend",
+            None
+        )
+
+        if not trend_data:
+            return html.Div(
+                "Unable to retrieve daily trend data. Please try again shortly.",
+                style={
+                    "padding": "30px",
+                    "textAlign": "center",
+                    "color": "#B00020",
+                    "fontSize": "18px"
+                }
+            )
 
         return create_daily_trend_dashboard(
             trend_data
