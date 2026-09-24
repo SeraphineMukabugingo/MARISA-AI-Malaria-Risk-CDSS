@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir \
     requests==2.32.3 \
     pandas==2.2.2
 
-COPY app.py .
+COPY dash_app/app.py .
 
 EXPOSE 8050
 
